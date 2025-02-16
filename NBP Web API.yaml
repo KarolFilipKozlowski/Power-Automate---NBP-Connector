@@ -1,0 +1,410 @@
+swagger: '2.0'
+info:
+  title: NBP Web API
+  description: Umożliwia pobranie kursów walut NBP za pomocą serwisu api.nbp.pl.
+  version: '1.0'
+host: api.nbp.pl
+basePath: /api/exchangerates
+schemes:
+  - https
+consumes: []
+produces: []
+paths:
+  /tables/{table}/:
+    get:
+      responses:
+        default:
+          description: default
+          schema: {}
+      operationId: tablesABC
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          default: A
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          enum:
+            - A
+            - B
+            - C
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          enum:
+            - application/json
+            - application/xml
+          x-ms-visibility: advanced
+          default: application/json
+      summary: Aktualnie obowiązująca tabela kursów
+      description: Aktualnie obowiązująca tabela kursów typu {table}
+  /tables/{table}/last/{topCount}/:
+    get:
+      responses:
+        default:
+          description: default
+          schema: {}
+      summary: Seria ostatnich kursów z tabeli kursów
+      description: Seria ostatnich {topCount} tabel kursów typu {table}
+      operationId: tablesABClastX
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          enum:
+            - A
+            - B
+            - C
+          default: A
+        - name: topCount
+          in: path
+          required: true
+          type: integer
+          default: 14
+          format: int64
+          x-ms-summary: Seria ostatnich X kursów
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          default: application/json
+          enum:
+            - application/json
+            - application/xml
+          x-ms-visibility: advanced
+  /tables/{table}/today/:
+    get:
+      responses:
+        default:
+          description: default
+          schema: {}
+      operationId: tablesABCtoday
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          default: A
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          enum:
+            - A
+            - B
+            - C
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          default: application/json
+          x-ms-visibility: advanced
+          enum:
+            - application/json
+            - application/xml
+      description: >-
+        Tabela kursów typu {table} opublikowana w dniu dzisiejszym (albo brak
+        danych)
+      summary: Aktualnie obowiązująca tabela kursów opublikowana w dniu dzisiejszym
+  /rates/{table}/{code}/{date}/:
+    get:
+      responses:
+        default:
+          description: default
+          schema:
+            type: object
+            properties:
+              rates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    'no':
+                      type: string
+                      description: 'no'
+                    effectiveDate:
+                      type: string
+                      description: effectiveDate
+                    mid:
+                      type: number
+                      format: float
+                      description: kurs
+                      title: ''
+                description: rates
+      operationId: ratesCODEDate
+      summary: Kurs waluty z tabeli kursów typu opublikowany w dniu
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          default: A
+          enum:
+            - A
+            - B
+            - C
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+        - name: code
+          in: path
+          required: true
+          type: string
+          x-ms-summary: Trzyliterowy kod waluty
+          description: ISO 4217
+        - name: date
+          in: path
+          required: true
+          type: string
+          description: ''
+          format: date
+          x-ms-summary: Data w formacie RRRR-MM-DD
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          default: application/json
+          enum:
+            - application/json
+            - application/xml
+          x-ms-visibility: advanced
+      description: >-
+        Kurs waluty {code} z tabeli kursów typu {table} opublikowany w dniu
+        {date} (albo brak danych)
+  /tables/{table}/{startDate}/{endDate}/:
+    get:
+      responses:
+        default:
+          description: default
+          schema: {}
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          default: A
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          enum:
+            - A
+            - B
+            - C
+        - name: startDate
+          in: path
+          required: true
+          type: string
+          x-ms-summary: Data w formacie RRRR-MM-DD
+          format: date
+        - name: endDate
+          in: path
+          required: true
+          type: string
+          x-ms-summary: Data w formacie RRRR-MM-DD
+          format: date
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          default: application/json
+          x-ms-visibility: advanced
+          enum:
+            - application/json
+            - application/xml
+      description: >-
+        Seria tabel kursów typu {table} opublikowanych w zakresie dat od
+        {startDate} do {endDate} (albo brak danych) ((przy czym pojedyncze
+        zapytanie nie może obejmować przedziału dłuższego, niż 93 dni))
+      operationId: tablesABCStartdateEnddate
+      summary: Kurs waluty z tabeli kursów typu opublikowany pomiędzy datami
+  /rates/{table}/{code}/:
+    get:
+      responses:
+        default:
+          description: default
+          schema: {}
+      summary: Aktualnie obowiązujący kurs waluty
+      operationId: ratesCODE
+      description: Aktualnie obowiązujący kurs waluty {code} z tabeli kursów typu {table}
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          default: A
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          enum:
+            - A
+            - B
+            - C
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+        - name: code
+          in: path
+          required: true
+          type: string
+          x-ms-summary: Trzyliterowy kod waluty
+          description: ISO 4217
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          default: application/json
+          enum:
+            - application/json
+            - application/xml
+          x-ms-visibility: advanced
+  /rates/{table}/{code}/last/{topCount}/:
+    get:
+      responses:
+        default:
+          description: default
+          schema: {}
+      operationId: ratesCODElastX
+      summary: Seria ostatnich obowiązujący kurów waluty
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          default: A
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          enum:
+            - A
+            - B
+            - C
+        - name: code
+          in: path
+          required: true
+          type: string
+          x-ms-summary: Trzyliterowy kod waluty
+          description: ISO 4217
+        - name: topCount
+          in: path
+          required: true
+          type: integer
+          default: 14
+          x-ms-summary: Seria ostatnich X kursów
+          format: int64
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          default: application/json
+          enum:
+            - application/json
+            - application/xml
+  /rates/{table}/{code}/today/:
+    get:
+      responses:
+        default:
+          description: default
+          schema: {}
+      summary: Aktualnie obowiązujący kurs waluty opublikowany w dniu dzisiejszym
+      operationId: ratesCODEtoday
+      description: >-
+        Kurs waluty {code} z tabeli kursów typu {table} opublikowany w dniu
+        dzisiejszym (albo brak danych)
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          default: A
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          enum:
+            - A
+            - B
+            - C
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+        - name: code
+          in: path
+          required: true
+          type: string
+          x-ms-summary: Trzyliterowy kod waluty
+          description: ISO 4217
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          default: application/json
+          enum:
+            - application/json
+            - application/xml
+          x-ms-visibility: advanced
+  /rates/{table}/{code}/{startDate}/{endDate}/:
+    get:
+      responses:
+        default:
+          description: default
+          schema: {}
+      parameters:
+        - name: table
+          in: path
+          required: true
+          type: string
+          default: A
+          description: >-
+            Tabela A kursów średnich walut obcych, Tabela B kursów średnich
+            walut obcych, Tabela C kursów kupna i sprzedaży walut obcych
+          x-ms-summary: Typ tabeli (A, B, lub C)
+          enum:
+            - A
+            - B
+            - C
+        - name: code
+          in: path
+          required: true
+          type: string
+          description: ISO 4217
+          x-ms-summary: Trzyliterowy kod waluty
+        - name: startDate
+          in: path
+          required: true
+          type: string
+          x-ms-summary: Data w formacie RRRR-MM-DD
+          format: date
+        - name: endDate
+          in: path
+          required: true
+          type: string
+          x-ms-summary: Data w formacie RRRR-MM-DD
+          format: date
+        - name: Accept
+          in: header
+          required: false
+          type: string
+          default: application/json
+          x-ms-visibility: advanced
+          enum:
+            - application/json
+            - application/xml
+      description: >-
+        Seria tabel kursów typu {table} opublikowanych w zakresie dat od
+        {startDate} do {endDate} (albo brak danych) ((przy czym pojedyncze
+        zapytanie nie może obejmować przedziału dłuższego, niż 93 dni))
+      operationId: ratesCODEStartdateEnddate
+      summary: Kurs waluty z tabeli kursów typu opublikowany pomiędzy datami
+definitions: {}
+parameters: {}
+responses: {}
+securityDefinitions: {}
+security: []
+tags: []
